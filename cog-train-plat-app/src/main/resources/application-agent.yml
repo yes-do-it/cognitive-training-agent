@@ -1,0 +1,26 @@
+cognitive:
+  agent:
+    enabled: ${COGNITIVE_AGENT_ENABLED:false}
+  mcp:
+    enabled: ${COGNITIVE_MCP_ENABLED:false}
+
+spring:
+  ai:
+    openai:
+      chat:
+        enabled: ${COGNITIVE_OPENAI_ENABLED:true}
+        options:
+          model: ${SPRING_AI_OPENAI_MODEL:gpt-4.1-mini}
+      base-url: ${SPRING_AI_OPENAI_BASE_URL:https://api.openai.com}
+      api-key: ${SPRING_AI_OPENAI_API_KEY:}
+    mcp:
+      client:
+        enabled: ${COGNITIVE_MCP_CLIENT_ENABLED:false}
+        type: SYNC
+        name: cognitive-training-agent
+        version: 1.0.0
+        sse:
+          connections:
+            cognitive-training:
+              url: ${COGNITIVE_MCP_SERVER_URL:http://localhost:8091/mcp}
+              sse-endpoint: /sse

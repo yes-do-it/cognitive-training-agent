@@ -1,0 +1,63 @@
+server:
+  port: ${APP_PORT:8091}
+
+thread:
+  pool:
+    executor:
+      config:
+        core-pool-size: 20
+        max-pool-size: 50
+        keep-alive-time: 5000
+        block-queue-size: 5000
+        policy: CallerRunsPolicy
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: ${SPRING_MULTIPART_MAX_FILE_SIZE:10MB}
+      max-request-size: ${SPRING_MULTIPART_MAX_REQUEST_SIZE:10MB}
+  datasource:
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:change-me}
+    url: ${MYSQL_URL:jdbc:mysql://127.0.0.1:13306/cognitive_training?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    pgvector:
+      driver-class-name: org.postgresql.Driver
+      url: ${PGVECTOR_URL:jdbc:postgresql://127.0.0.1:15432/ai-rag-knowledge}
+      username: ${PGVECTOR_USERNAME:postgres}
+      password: ${PGVECTOR_PASSWORD:change-me}
+      hikari:
+        maximum-pool-size: 5
+        minimum-idle: 1
+  ai:
+    vectorstore:
+      type: none
+    openai:
+      chat:
+        enabled: false
+    mcp:
+      client:
+        enabled: false
+  hikari:
+    pool-name: Retail_HikariCP
+    minimum-idle: 15
+    idle-timeout: 180000
+    maximum-pool-size: 25
+    auto-commit: true
+    max-lifetime: 1800000
+    connection-timeout: 30000
+    connection-test-query: SELECT 1
+  type: com.zaxxer.hikari.HikariDataSource
+
+cognitive:
+  rag:
+    enabled: ${COGNITIVE_RAG_ENABLED:false}
+
+logging:
+  level:
+    root: info
+  config: classpath:logback-spring.xml
+
+
+
+

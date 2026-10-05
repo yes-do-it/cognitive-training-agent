@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的认知训练</title>
+  <link rel="stylesheet" href="/user-styles.css">
+</head>
+<body>
+  <header class="user-topbar">
+    <a class="user-brand" href="/"><span class="brand-mark">认</span><span><strong>CogTrain</strong><small>我的认知训练 · 演示用户</small></span></a>
+    <div class="user-tools"><label>训练日期<input id="trainingDate" type="date"></label><button id="refreshButton" class="icon-button" title="刷新">↻</button><a class="admin-link" href="/">管理端</a></div>
+  </header>
+  <main class="user-page">
+    <section class="hero"><div><p class="eyebrow">MY TRAINING</p><h1>今天，完成一小步训练</h1><p class="hero-copy">查看今天的训练内容，按照说明完成训练，并记录你的进步。</p></div><div class="connection-box"><span id="connectionDot" class="dot pending"></span><span id="connectionText">正在连接训练服务</span></div></section>
+        <section class="summary-grid"><article class="summary-card"><span>今日训练</span><strong id="taskCount">-</strong><small>当天安排的训练数量</small></article><article class="summary-card"><span>已完成</span><strong id="completedCount">-</strong><small id="progressText">等待数据</small></article><article class="summary-card"><span>近 30 天完成率</span><strong id="successRate">-</strong><small>根据已完成训练计算</small></article></section>
+    <section class="panel trend-panel"><div class="panel-heading"><div><p class="eyebrow">TRAINING PROGRESS</p><h2>训练表现</h2><p class="muted">根据最近 30 天的执行记录，了解自己的训练变化。</p></div><button id="refreshTrendButton" class="ghost">刷新表现</button></div><div class="trend-stats"><article><span>训练次数</span><strong id="trendTotal">-</strong></article><article><span>平均分数</span><strong id="trendAverageScore">-</strong></article><article><span>平均耗时</span><strong id="trendAverageDuration">-</strong></article><article><span>成功次数</span><strong id="trendSuccessCount">-</strong></article></div><div id="trendList" class="trend-list"><div class="empty">正在加载训练表现...</div></div></section>
+    <section class="main-grid">
+      <article class="panel today-panel"><div class="panel-heading"><div><p class="eyebrow">TODAY'S TRAINING</p><h2>今日训练内容</h2><p id="dateHint" class="muted"></p></div><button id="refreshTasksButton" class="ghost">刷新</button></div><div id="taskList" class="task-list"><div class="empty">正在加载今日训练...</div></div></article>
+      <aside class="panel assistant-panel"><p class="eyebrow">TRAINING ASSISTANT</p><h2>训练助手</h2><p class="muted">可以询问今天为什么安排这个训练，或让助手解释训练方法。助手只读取演示用户的训练数据，不会直接修改计划。</p><div class="quick-prompts"><button class="prompt-chip" data-prompt="请告诉我今天要训练什么，以及这个训练的目标是什么">今天练什么</button><button class="prompt-chip" data-prompt="请根据我的最近训练情况给我一个简单建议">训练建议</button></div><textarea id="assistantMessage" rows="4" placeholder="例如：这个训练应该注意什么？"></textarea><button id="assistantButton" class="primary full">咨询训练助手</button><pre id="assistantOutput" class="assistant-output">等待你的问题...</pre></aside>
+    </section>
+    <section id="trainingPanel" class="panel training-panel" hidden><div class="panel-heading"><div><p class="eyebrow">TRAINING SESSION</p><h2 id="trainingTitle">训练内容</h2></div><span id="trainingStatus" class="tag">待开始</span></div><div class="training-meta"><span id="trainingType">-</span><span id="trainingDifficulty">-</span><span>建议自主完成</span></div><div id="trainingBody" class="training-body"></div><div id="exerciseArea" class="exercise-area" hidden><div class="exercise-progress"><strong id="exerciseProgress">第 1 / 3 轮</strong><span id="exerciseTimerHint">准备开始</span></div><div id="sequenceDisplay" class="sequence-display">准备开始</div><p id="sequenceHint" class="exercise-hint">数字出现后请按顺序记忆。</p><div class="answer-row"><input id="answerInput" type="text" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="请输入刚才看到的数字"><button id="submitAnswerButton" class="primary">提交本轮答案</button><button id="reactionButton" class="primary reaction-button" hidden disabled>等待信号...</button></div><div id="exerciseFeedback" class="exercise-feedback"></div></div><div id="startArea" class="session-actions"><p class="muted">先阅读训练说明，准备好后点击开始。</p><button id="startButton" class="primary">开始本次训练 →</button></div><div id="finishArea" class="finish-area" hidden><div class="form-grid"><label>训练结果<select id="finishSuccess"><option value="true">我已完成</option><option value="false">未完成 / 需要重试</option></select></label><label>得分（0-100）<input id="finishScore" type="number" min="0" max="100" value="80"></label></div><label>耗时（秒）<input id="finishDuration" type="number" min="0" value="600"></label><label>训练感受或结果说明<textarea id="finishResultData" rows="3" placeholder="例如：数字顺序复述完成，后半段注意力下降"></textarea></label><button id="finishButton" class="primary">提交训练结果</button><div id="finishResult" class="form-result"></div></div></section>
+    <footer>CogTrain · 当前为演示用户 1 · 正式多用户版本将接入登录与权限</footer>
+  </main>
+  <script src="/user-app.js"></script>
+</body>
+</html>

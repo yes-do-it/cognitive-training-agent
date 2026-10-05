@@ -1,0 +1,76 @@
+services:
+  mysql:
+    image: mysql:8.0.32
+    container_name: cognitive-training-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-change-me}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cognitive_training}
+      TZ: Asia/Shanghai
+    ports:
+      - "13306:3306"
+    volumes:
+      - cognitive_training_mysql_data:/var/lib/mysql
+      - ./docs/dev-ops/mysql/sql/cognitive-training-scheduler.sql:/docker-entrypoint-initdb.d/01-cognitive-training.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  vector_db:
+    image: pgvector/pgvector:pg16
+    container_name: cognitive-training-vector-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PGVECTOR_DATABASE:-ai-rag-knowledge}
+      POSTGRES_USER: ${PGVECTOR_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${PGVECTOR_PASSWORD:-change-me}
+      TZ: Asia/Shanghai
+    ports:
+      - "15432:5432"
+    volumes:
+      - cognitive_training_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build:
+      context: ./cog-train-plat-app
+      dockerfile: Dockerfile
+    image: cognitive-training-agent-platform:dev
+    container_name: cognitive-training-app
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      APP_PORT: ${APP_PORT:-8091}
+      COGNITIVE_AGENT_ENABLED: ${COGNITIVE_AGENT_ENABLED:-false}
+      COGNITIVE_MCP_ENABLED: ${COGNITIVE_MCP_ENABLED:-false}
+      COGNITIVE_MCP_CLIENT_ENABLED: ${COGNITIVE_MCP_CLIENT_ENABLED:-false}
+      COGNITIVE_RAG_ENABLED: ${COGNITIVE_RAG_ENABLED:-false}
+      PGVECTOR_URL: "jdbc:postgresql://vector_db:5432/${PGVECTOR_DATABASE:-ai-rag-knowledge}"
+      PGVECTOR_USERNAME: ${PGVECTOR_USERNAME:-postgres}
+      PGVECTOR_PASSWORD: ${PGVECTOR_PASSWORD:-change-me}
+      COGNITIVE_MCP_SERVER_URL: ${COGNITIVE_MCP_SERVER_URL:-http://localhost:8091/mcp}
+      COGNITIVE_OPENAI_ENABLED: ${COGNITIVE_OPENAI_ENABLED:-true}
+      SPRING_AI_OPENAI_MODEL: ${SPRING_AI_OPENAI_MODEL:-gpt-4.1-mini}
+      SPRING_AI_OPENAI_BASE_URL: ${SPRING_AI_OPENAI_BASE_URL:-https://api.openai.com}
+      SPRING_AI_OPENAI_API_KEY: ${SPRING_AI_OPENAI_API_KEY:-replace-me}
+      MYSQL_USERNAME: ${MYSQL_USERNAME:-root}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-change-me}
+      MYSQL_URL: "jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-cognitive_training}?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true"
+    ports:
+      - "${APP_PORT:-8091}:${APP_PORT:-8091}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      vector_db:
+        condition: service_healthy
+
+volumes:
+  cognitive_training_mysql_data:
+  cognitive_training_pg_data:
+

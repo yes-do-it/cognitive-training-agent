@@ -1,0 +1,68 @@
+server:
+  port: ${APP_PORT:8091}
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: ${SPRING_MULTIPART_MAX_FILE_SIZE:10MB}
+      max-request-size: ${SPRING_MULTIPART_MAX_REQUEST_SIZE:10MB}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:13306}/${DB_NAME:cognitive_training}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:change-me}
+    hikari:
+      pool-name: CognitiveTrainingCloudHikariCP
+      minimum-idle: 2
+      maximum-pool-size: 10
+      idle-timeout: 180000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+    pgvector:
+      driver-class-name: org.postgresql.Driver
+      url: ${PGVECTOR_URL:jdbc:postgresql://localhost:15432/ai-rag-knowledge}
+      username: ${PGVECTOR_USERNAME:postgres}
+      password: ${PGVECTOR_PASSWORD:change-me}
+      hikari:
+        maximum-pool-size: ${PGVECTOR_MAX_POOL_SIZE:5}
+        minimum-idle: ${PGVECTOR_MINIMUM_IDLE:1}
+  ai:
+    vectorstore:
+      type: none
+    openai:
+      chat:
+        enabled: ${COGNITIVE_OPENAI_ENABLED:false}
+        options:
+          model: ${SPRING_AI_OPENAI_MODEL:gpt-4.1-mini}
+      base-url: ${SPRING_AI_OPENAI_BASE_URL:https://api.openai.com}
+      api-key: ${SPRING_AI_OPENAI_API_KEY:}
+    mcp:
+      client:
+        enabled: ${COGNITIVE_MCP_CLIENT_ENABLED:false}
+        type: SYNC
+        name: cognitive-training-agent
+        version: 1.0.0
+        sse:
+          connections:
+            cognitive-training:
+              url: ${COGNITIVE_MCP_SERVER_URL:http://127.0.0.1:8091/mcp}
+              sse-endpoint: /sse
+
+cognitive:
+  agent:
+    enabled: ${COGNITIVE_AGENT_ENABLED:false}
+  mcp:
+    enabled: ${COGNITIVE_MCP_ENABLED:false}
+  rag:
+    enabled: ${COGNITIVE_RAG_ENABLED:false}
+
+logging:
+  level:
+    root: info
+  config: classpath:logback-spring.xml
+
+
+

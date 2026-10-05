@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xfone.ai.infrastructure.dao.TrainingContentDao">
+    <resultMap id="TrainingContentMap" type="cn.xfone.ai.infrastructure.dao.po.TrainingContentPO">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="contentType" column="content_type"/>
+        <result property="difficulty" column="difficulty"/>
+        <result property="contentBody" column="content_body"/>
+        <result property="status" column="status"/>
+        <result property="version" column="version"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+    <insert id="insert" parameterType="cn.xfone.ai.infrastructure.dao.po.TrainingContentPO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO training_content
+            (title, content_type, difficulty, content_body, status, version)
+        VALUES
+            (#{title}, #{contentType}, #{difficulty}, #{contentBody}, #{status}, #{version})
+    </insert>
+    <select id="findAll" resultMap="TrainingContentMap">
+        SELECT id, title, content_type, difficulty, content_body, status,
+               version, created_at, updated_at
+        FROM training_content
+        ORDER BY updated_at DESC, id DESC
+    </select>
+    <select id="findById" resultMap="TrainingContentMap">
+        SELECT id, title, content_type, difficulty, content_body, status,
+               version, created_at, updated_at
+        FROM training_content WHERE id = #{contentId}
+    </select>
+    <update id="update" parameterType="cn.xfone.ai.infrastructure.dao.po.TrainingContentPO">
+        UPDATE training_content
+        SET title = #{title}, content_type = #{contentType}, difficulty = #{difficulty},
+            content_body = #{contentBody}, status = #{status}, version = version + 1,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+          AND version = #{version}
+    </update>
+    <select id="findContentIdsByPlanId" resultType="java.lang.Long">
+        SELECT content_id
+        FROM training_plan_content
+        WHERE plan_id = #{planId}
+        ORDER BY sort_order, content_id
+    </select>
+    <select id="findEnabledByPlanId" resultMap="TrainingContentMap">
+        SELECT c.id, c.title, c.content_type, c.difficulty, c.content_body,
+               c.status, c.version, c.created_at, c.updated_at
+        FROM training_plan_content pc
+        INNER JOIN training_content c ON c.id = pc.content_id
+        WHERE pc.plan_id = #{planId} AND pc.enabled = TRUE AND c.status = 'ENABLED'
+        ORDER BY pc.sort_order, c.id
+    </select>
+    <insert id="bindToPlan">
+        INSERT INTO training_plan_content (plan_id, content_id, sort_order, enabled)
+        VALUES (#{planId}, #{contentId}, #{sortOrder}, TRUE)
+        ON DUPLICATE KEY UPDATE sort_order = #{sortOrder}, enabled = TRUE
+    </insert>
+    <delete id="unbindFromPlan">
+        DELETE FROM training_plan_content
+        WHERE plan_id = #{planId} AND content_id = #{contentId}
+    </delete>
+</mapper>
+
+

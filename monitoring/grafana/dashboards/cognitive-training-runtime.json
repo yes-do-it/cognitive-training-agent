@@ -1,0 +1,46 @@
+{
+  "uid": "cognitive-training-runtime",
+  "title": "Cognitive Training Runtime",
+  "tags": ["cognitive-training", "runtime"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Training Tasks by Status",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [{"expr": "cognitive_training_tasks", "legendFormat": "{{status}}", "refId": "A"}]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Executions by Status",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [{"expr": "cognitive_training_executions", "legendFormat": "{{status}}", "refId": "A"}]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Index Tasks by Status",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [{"expr": "cognitive_training_index_tasks", "legendFormat": "{{status}}", "refId": "A"}]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "MCP Tools",
+      "gridPos": {"h": 8, "w": 6, "x": 12, "y": 8},
+      "targets": [{"expr": "cognitive_training_mcp_tools", "refId": "A"}]
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Runtime Alerts",
+      "gridPos": {"h": 8, "w": 6, "x": 18, "y": 8},
+      "targets": [{"expr": "cognitive_training_alerts", "refId": "A"}]
+    }
+  ]
+}

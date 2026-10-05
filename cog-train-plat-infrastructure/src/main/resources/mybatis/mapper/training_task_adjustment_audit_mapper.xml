@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xfone.ai.infrastructure.dao.TrainingTaskAdjustmentAuditDao">
+    <resultMap id="TrainingTaskAdjustmentAuditMap"
+               type="cn.xfone.ai.infrastructure.dao.po.TrainingTaskAdjustmentAuditPO">
+        <id property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="trainingDate" column="training_date"/>
+        <result property="oldContentId" column="old_content_id"/>
+        <result property="newContentId" column="new_content_id"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="reason" column="reason"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <insert id="insert"
+            parameterType="cn.xfone.ai.infrastructure.dao.po.TrainingTaskAdjustmentAuditPO"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO training_task_adjustment_audit
+            (task_id, user_id, training_date, old_content_id, new_content_id, operator_id, reason)
+        VALUES
+            (#{taskId}, #{userId}, #{trainingDate}, #{oldContentId}, #{newContentId}, #{operatorId}, #{reason})
+    </insert>
+
+    <select id="findByTaskId" resultMap="TrainingTaskAdjustmentAuditMap">
+        SELECT id, task_id, user_id, training_date, old_content_id, new_content_id,
+               operator_id, reason, created_at
+        FROM training_task_adjustment_audit
+        WHERE task_id = #{taskId}
+        ORDER BY id ASC
+    </select>
+
+    <select id="findByUserAndDate" resultMap="TrainingTaskAdjustmentAuditMap">
+        SELECT id, task_id, user_id, training_date, old_content_id, new_content_id,
+               operator_id, reason, created_at
+        FROM training_task_adjustment_audit
+        WHERE user_id = #{userId} AND training_date = #{trainingDate}
+        ORDER BY id ASC
+    </select>
+</mapper>

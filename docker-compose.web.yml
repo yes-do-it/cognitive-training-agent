@@ -1,0 +1,17 @@
+services:
+  web:
+    build:
+      context: ./cog-train-plat-web
+      dockerfile: Dockerfile
+    image: cognitive-training-agent-web:1.0-SNAPSHOT
+    container_name: cognitive-training-web
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
+    name: cognitive-training-agent-platform_default

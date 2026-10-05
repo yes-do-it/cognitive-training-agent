@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xfone.ai.infrastructure.dao.TrainingTaskDao">
+    <resultMap id="TrainingTaskMap" type="cn.xfone.ai.infrastructure.dao.po.TrainingTaskPO">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="contentId" column="content_id"/>
+        <result property="trainingDate" column="training_date"/>
+        <result property="status" column="status"/>
+        <result property="scheduledAt" column="scheduled_at"/>
+        <result property="completedAt" column="completed_at"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+    <insert id="insertIgnore" parameterType="cn.xfone.ai.infrastructure.dao.po.TrainingTaskPO">
+        INSERT INTO training_task
+            (user_id, plan_id, content_id, training_date, status, scheduled_at)
+        VALUES
+            (#{userId}, #{planId}, #{contentId}, #{trainingDate}, #{status}, #{scheduledAt})
+        ON DUPLICATE KEY UPDATE id = id
+    </insert>
+    <select id="findById" resultMap="TrainingTaskMap">
+        SELECT id, user_id, plan_id, content_id, training_date, status,
+               scheduled_at, completed_at, created_at, updated_at
+        FROM training_task WHERE id = #{taskId}
+    </select>
+    <select id="findByBusinessKey" resultMap="TrainingTaskMap">
+        SELECT id, user_id, plan_id, content_id, training_date, status,
+               scheduled_at, completed_at, created_at, updated_at
+        FROM training_task
+        WHERE user_id = #{userId} AND plan_id = #{planId} AND training_date = #{trainingDate}
+    </select>
+    <select id="findByUserAndDate" resultMap="TrainingTaskMap">
+        SELECT id, user_id, plan_id, content_id, training_date, status,
+               scheduled_at, completed_at, created_at, updated_at
+        FROM training_task
+        WHERE user_id = #{userId} AND training_date = #{trainingDate}
+        ORDER BY id
+    </select>
+    <update id="updateStatusIfExpected">
+        UPDATE training_task
+        SET status = #{newStatus}, completed_at = #{completedAt}, updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{taskId} AND status = #{expectedStatus}
+    </update>
+    <update id="updateContentIfExpectedStatus">
+        UPDATE training_task
+        SET content_id = #{contentId}, updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{taskId} AND status = #{expectedStatus}
+    </update>
+</mapper>

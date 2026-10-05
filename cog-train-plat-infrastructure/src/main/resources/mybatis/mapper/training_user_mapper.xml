@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xfone.ai.infrastructure.dao.TrainingUserDao">
+    <resultMap id="TrainingUserMap" type="cn.xfone.ai.infrastructure.dao.po.TrainingUserPO">
+        <id property="id" column="id"/>
+        <result property="externalUserId" column="external_user_id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="status" column="status"/>
+        <result property="timezone" column="timezone"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+    <insert id="insert" parameterType="cn.xfone.ai.infrastructure.dao.po.TrainingUserPO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO training_user (external_user_id, nickname, status, timezone)
+        VALUES (#{externalUserId}, #{nickname}, #{status}, #{timezone})
+    </insert>
+    <select id="findById" resultMap="TrainingUserMap">
+        SELECT id, external_user_id, nickname, status, timezone, created_at, updated_at
+        FROM training_user WHERE id = #{userId}
+    </select>
+    <select id="findByExternalUserId" resultMap="TrainingUserMap">
+        SELECT id, external_user_id, nickname, status, timezone, created_at, updated_at
+        FROM training_user WHERE external_user_id = #{externalUserId}
+    </select>
+    <update id="updateStatus">
+        UPDATE training_user SET status = #{status}, updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{userId}
+    </update>
+</mapper>

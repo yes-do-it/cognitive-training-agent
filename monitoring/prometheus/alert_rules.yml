@@ -1,0 +1,38 @@
+groups:
+  - name: cognitive-training-runtime
+    rules:
+      - alert: CognitiveTrainingApplicationDown
+        expr: cognitive_training_health{status="UP"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Cognitive training application is not healthy
+          description: The cognitive training application health metric is not UP.
+
+      - alert: CognitiveTrainingComponentDegraded
+        expr: cognitive_training_component_health < 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Cognitive training component is degraded
+          description: A MySQL, pgvector, MCP Client, or Agent component is unavailable.
+
+      - alert: CognitiveTrainingStaleTask
+        expr: cognitive_training_stale_tasks > 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Cognitive training has stale tasks
+          description: At least one training task, execution, or index task exceeded the configured threshold.
+
+      - alert: CognitiveTrainingIndexFailure
+        expr: cognitive_training_index_tasks{status="FAILED"} > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Cognitive training index task failed
+          description: One or more persisted knowledge index tasks are in FAILED status.
